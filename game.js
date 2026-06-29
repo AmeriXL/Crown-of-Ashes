@@ -81,7 +81,7 @@ function resetGame() {
   bossDropCD = BOSS_DROP_CD;
   endlessScore = 0; endlessKills = 0; endlessDifficulty = 1;
   boss = { alive: false, hp: 0, maxHP: 0, x: W/2, y: 100,
-           dir: 1, speed: 2, shootCD: 80, phase: 1 };
+           dir: 1, speed: 1.2, shootCD: 80, phase: 1 };
   startWave(1);
 }
 
@@ -114,7 +114,7 @@ function spawnEnemy() {
     kind,
     shootCD: 60+Math.random()*60,
     animOff: Math.random()*30|0,
-    speed: (kind==="chaser" ? 1.2 : 0.65) * (1 + diff*0.05)
+    speed: (kind==="chaser" ? 0.7 : 0.4) * (1 + diff*0.04)
   });
 }
 
@@ -198,7 +198,7 @@ function beamHitsPoint(tx, ty) {
 
 // ── Boss ───────────────────────────────────────────────────────
 function updateBoss() {
-  if (boss.hp <= boss.maxHP/2) { boss.phase=2; boss.speed=2.2; }
+  if (boss.hp <= boss.maxHP/2) { boss.phase=2; boss.speed=1.4; }
   boss.x += boss.dir * boss.speed;
   if (boss.x > W-60) boss.dir=-1;
   if (boss.x < 60)   boss.dir= 1;
@@ -218,7 +218,7 @@ function updateBoss() {
         const t=(i/4)-0.5, a=base+t*0.7;
         enemyBullets.push({ x:boss.x, y:boss.y+30, dx:Math.cos(a), dy:Math.sin(a) });
       }
-      boss.shootCD=90;
+      boss.shootCD=120;
     } else {
       for (let i=0;i<7;i++) {
         const t=(i/6)-0.5, a=base+t*0.94;
@@ -227,7 +227,7 @@ function updateBoss() {
       const d=Math.hypot(playerX-boss.x, playerY-boss.y)||1;
       enemyBullets.push({ x:boss.x, y:boss.y+30,
         dx:(playerX-boss.x)/d, dy:(playerY-boss.y)/d });
-      boss.shootCD=60;
+      boss.shootCD=80;
     }
   }
 }
@@ -238,7 +238,7 @@ function update() {
   if (gameState!=="playing") return;
   animTick++;
   const w = selectedWeapon;
-  const spd = 2.5 + upgrades.speed * 0.3;
+  const spd = 1.8 + upgrades.speed * 0.2;
 
   // Timers
   if (attackBoostTimer>0) { attackBoostTimer--; if(!attackBoostTimer) attackBoost=1+upgrades.damage; }
@@ -322,7 +322,7 @@ function update() {
   // Spawn
   if (enemiesToSpawn>0) {
     spawnTimer++;
-    const spawnInterval = Math.max(30, 55 - wave);
+    const spawnInterval = Math.max(45, 70 - wave);
     if (spawnTimer>=spawnInterval) { spawnEnemy(); enemiesToSpawn--; spawnTimer=0; }
   }
 
@@ -343,9 +343,9 @@ function update() {
   if (boss.alive) updateBoss();
 
   // Move bullets
-  const bspd = (w.bulletSpeed * 0.6) + upgrades.speed*0.3;
+  const bspd = (w.bulletSpeed * 0.35) + upgrades.speed*0.2;
   bullets.forEach(b=>{      b.x+=b.dx*bspd; b.y+=b.dy*bspd; });
-  enemyBullets.forEach(b=>{ b.x+=b.dx*3.5;  b.y+=b.dy*3.5;  });
+  enemyBullets.forEach(b=>{ b.x+=b.dx*2.0;  b.y+=b.dy*2.0;  });
   bullets      =bullets.filter(b=>b.x>-10&&b.x<W+10&&b.y>-10&&b.y<H+10);
   enemyBullets =enemyBullets.filter(b=>b.x>-10&&b.x<W+10&&b.y>-10&&b.y<H+10);
 
