@@ -470,7 +470,7 @@ function keyDown(e) {
 // ── Submit score ───────────────────────────────────────────────
 async function submitScore() {
   try {
-    await fetch("https://crown-of-ashes.onrender.com /api/score", {
+    await fetch("http://localhost:5000/api/score", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -485,11 +485,27 @@ async function submitScore() {
   } catch(err) { /* backend offline — silent fail */ }
 }
 
-// ── Game loop ──────────────────────────────────────────────────
-let lastTime = 0;
+// ── Game loop (fixed 60 fps timestep) ─────────────────────────
+// This ensures the game runs at the same speed on all monitors
+// (60Hz, 120Hz, 144Hz, etc.) by accumulating real elapsed time
+// and only ticking the logic forward in fixed 16.67ms steps.
+const FIXED_DT = 1000 / 60;   // 16.667 ms per logic tick
+let lastTime   = 0;
+let accumulator = 0;
+
 function gameLoop(ts) {
-  const dt = ts - lastTime; lastTime = ts;
-  update();
+  const elapsed = ts - lastTime;
+  lastTime = ts;
+
+  // Cap elapsed to 200ms so a tab-switch / freeze doesn't cause
+  // a huge burst of catch-up ticks when the player returns.
+  accumulator += Math.min(elapsed, 200);
+
+  while (accumulator >= FIXED_DT) {
+    update();
+    accumulator -= FIXED_DT;
+  }
+
   draw();
   requestAnimationFrame(gameLoop);
 }
