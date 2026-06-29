@@ -114,7 +114,7 @@ function spawnEnemy() {
     kind,
     shootCD: 60+Math.random()*60,
     animOff: Math.random()*30|0,
-    speed: (kind==="chaser" ? 1.8 : 1.0) * (1 + diff*0.08)
+    speed: (kind==="chaser" ? 1.2 : 0.65) * (1 + diff*0.05)
   });
 }
 
@@ -198,7 +198,7 @@ function beamHitsPoint(tx, ty) {
 
 // ── Boss ───────────────────────────────────────────────────────
 function updateBoss() {
-  if (boss.hp <= boss.maxHP/2) { boss.phase=2; boss.speed=3.5; }
+  if (boss.hp <= boss.maxHP/2) { boss.phase=2; boss.speed=2.2; }
   boss.x += boss.dir * boss.speed;
   if (boss.x > W-60) boss.dir=-1;
   if (boss.x < 60)   boss.dir= 1;
@@ -218,7 +218,7 @@ function updateBoss() {
         const t=(i/4)-0.5, a=base+t*0.7;
         enemyBullets.push({ x:boss.x, y:boss.y+30, dx:Math.cos(a), dy:Math.sin(a) });
       }
-      boss.shootCD=70;
+      boss.shootCD=90;
     } else {
       for (let i=0;i<7;i++) {
         const t=(i/6)-0.5, a=base+t*0.94;
@@ -227,7 +227,7 @@ function updateBoss() {
       const d=Math.hypot(playerX-boss.x, playerY-boss.y)||1;
       enemyBullets.push({ x:boss.x, y:boss.y+30,
         dx:(playerX-boss.x)/d, dy:(playerY-boss.y)/d });
-      boss.shootCD=45;
+      boss.shootCD=60;
     }
   }
 }
@@ -238,7 +238,7 @@ function update() {
   if (gameState!=="playing") return;
   animTick++;
   const w = selectedWeapon;
-  const spd = 4 + upgrades.speed * 0.5;
+  const spd = 2.5 + upgrades.speed * 0.3;
 
   // Timers
   if (attackBoostTimer>0) { attackBoostTimer--; if(!attackBoostTimer) attackBoost=1+upgrades.damage; }
@@ -322,7 +322,7 @@ function update() {
   // Spawn
   if (enemiesToSpawn>0) {
     spawnTimer++;
-    const spawnInterval = Math.max(20, 40 - wave);
+    const spawnInterval = Math.max(30, 55 - wave);
     if (spawnTimer>=spawnInterval) { spawnEnemy(); enemiesToSpawn--; spawnTimer=0; }
   }
 
@@ -343,9 +343,9 @@ function update() {
   if (boss.alive) updateBoss();
 
   // Move bullets
-  const bspd = w.bulletSpeed + upgrades.speed*0.5;
+  const bspd = (w.bulletSpeed * 0.6) + upgrades.speed*0.3;
   bullets.forEach(b=>{      b.x+=b.dx*bspd; b.y+=b.dy*bspd; });
-  enemyBullets.forEach(b=>{ b.x+=b.dx*5.5;  b.y+=b.dy*5.5;  });
+  enemyBullets.forEach(b=>{ b.x+=b.dx*3.5;  b.y+=b.dy*3.5;  });
   bullets      =bullets.filter(b=>b.x>-10&&b.x<W+10&&b.y>-10&&b.y<H+10);
   enemyBullets =enemyBullets.filter(b=>b.x>-10&&b.x<W+10&&b.y>-10&&b.y<H+10);
 
