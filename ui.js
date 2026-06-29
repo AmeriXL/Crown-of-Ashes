@@ -91,7 +91,7 @@ async function loadLeaderboard(tab) {
   if (!el) return;
   el.innerHTML = `<div class="lb-empty">Loading...</div>`;
   try {
-    const res  = await fetch(`http://localhost:5000/api/scores?mode=${tab}`);
+    const res  = await fetch(`https://crown-of-ashes.onrender.com /api/scores?mode=${tab}`);
     const data = await res.json();
     renderLeaderboard(data.scores || [], el);
   } catch {
@@ -128,7 +128,7 @@ async function loadPreviewLeaderboard() {
   const el = document.getElementById("previewLb");
   if (!el) return;
   try {
-    const res  = await fetch("http://localhost:5000/api/scores?mode=endless&limit=5");
+    const res  = await fetch("https://crown-of-ashes.onrender.com /api/scores?mode=endless&limit=5");
     const data = await res.json();
     const scores = data.scores || [];
     if (!scores.length) { el.textContent = "No scores yet — be the first!"; return; }

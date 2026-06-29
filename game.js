@@ -470,7 +470,7 @@ function keyDown(e) {
 // ── Submit score ───────────────────────────────────────────────
 async function submitScore() {
   try {
-    await fetch("http://localhost:5000/api/score", {
+    await fetch("https://crown-of-ashes.onrender.com /api/score", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
