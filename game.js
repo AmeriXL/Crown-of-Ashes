@@ -78,10 +78,10 @@ function resetGame() {
   animTick = 0;
   bullets = []; enemyBullets = []; enemies = []; drops = [];
   wave = 1; enemiesToSpawn = 0; spawnTimer = 0;
-  bossDropCD = BOSS_DROP_CD;
+  bossDropCD = mode==="endless" ? Math.max(150, BOSS_DROP_CD - wave*15) : BOSS_DROP_CD;
   endlessScore = 0; endlessKills = 0; endlessDifficulty = 1;
   boss = { alive: false, hp: 0, maxHP: 0, x: W/2, y: 100,
-           dir: 1, speed: 1.2, shootCD: 80, phase: 1 };
+           dir: 1, speed: Math.min(2.3, 1.2 + (wave-1)*0.15), shootCD: 80, phase: 1 };
   startWave(1);
 }
 
@@ -114,7 +114,7 @@ function spawnEnemy() {
     kind,
     shootCD: 60+Math.random()*60,
     animOff: Math.random()*30|0,
-    speed: (kind==="chaser" ? 0.7 : 0.4) * (1 + diff*0.04)
+    speed: Math.min(2.3, (kind==="chaser" ? 0.7 : 0.4) * (1 + (wave - 1) * 0.12 + diff * 0.04))
   });
 }
 
@@ -127,7 +127,8 @@ function spawnBoss() {
 
 // ── Drops ──────────────────────────────────────────────────────
 function maybeDrop(x, y, forced=false) {
-  if (forced || Math.random()<0.35) {
+  const dropChance = mode==="endless" ? Math.min(0.70, 0.35 + wave*0.03) : 0.35;
+  if (forced || Math.random()<dropChance) {
     const kinds = ["hp","atk","shield"];
     drops.push({ x, y, kind: kinds[Math.random()*3|0], age:0 });
   }
@@ -198,7 +199,7 @@ function beamHitsPoint(tx, ty) {
 
 // ── Boss ───────────────────────────────────────────────────────
 function updateBoss() {
-  if (boss.hp <= boss.maxHP/2) { boss.phase=2; boss.speed=1.4; }
+  if (boss.hp <= boss.maxHP/2) { boss.phase=2; boss.speed=Math.min(2.3, boss.speed+0.5); }
   boss.x += boss.dir * boss.speed;
   if (boss.x > W-60) boss.dir=-1;
   if (boss.x < 60)   boss.dir= 1;
@@ -207,7 +208,7 @@ function updateBoss() {
   bossDropCD--;
   if (bossDropCD<=0) {
     maybeDrop(100+Math.random()*(W-200), 200+Math.random()*(H-350), true);
-    bossDropCD = BOSS_DROP_CD;
+    bossDropCD = mode==="endless" ? Math.max(150, BOSS_DROP_CD - wave*15) : BOSS_DROP_CD;
   }
 
   boss.shootCD--;
@@ -345,7 +346,7 @@ function update() {
   // Move bullets
   const bspd = (w.bulletSpeed * 0.35) + upgrades.speed*0.2;
   bullets.forEach(b=>{      b.x+=b.dx*bspd; b.y+=b.dy*bspd; });
-  enemyBullets.forEach(b=>{ b.x+=b.dx*2.0;  b.y+=b.dy*2.0;  });
+  enemyBullets.forEach(b=>{ const ebspd=Math.min(2.3, 2.0 + (wave-1)*0.07); b.x+=b.dx*ebspd; b.y+=b.dy*ebspd; });
   bullets      =bullets.filter(b=>b.x>-10&&b.x<W+10&&b.y>-10&&b.y<H+10);
   enemyBullets =enemyBullets.filter(b=>b.x>-10&&b.x<W+10&&b.y>-10&&b.y<H+10);
 
