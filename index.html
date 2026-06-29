@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crown of Ashes</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ── Name Entry Screen ─────────────────────────────────────── -->
+<div id="nameScreen" class="screen active">
+  <div class="name-box">
+    <div class="logo-title">CROWN OF ASHES</div>
+    <div class="logo-sub">The Shadow King awaits, knight.</div>
+    <div class="name-form">
+      <label for="nameInput">Enter your name to begin</label>
+      <input id="nameInput" type="text" maxlength="20" placeholder="Sir Aerin..." autocomplete="off"/>
+      <button id="nameBtn" onclick="submitName()">Enter the Arena</button>
+    </div>
+    <div class="name-leaderboard-preview">
+      <div class="lb-title">⚔ HALL OF KNIGHTS ⚔</div>
+      <div id="previewLb" class="preview-lb-list">Loading...</div>
+      <button class="lb-link" onclick="showScreen('leaderboardScreen')">View Full Leaderboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Weapon Select Screen ──────────────────────────────────── -->
+<div id="weaponScreen" class="screen">
+  <div class="weapon-box">
+    <div class="section-title">CHOOSE YOUR WEAPON</div>
+    <div class="weapon-grid" id="weaponGrid"></div>
+    <div class="weapon-desc-box">
+      <div id="weaponDescName" class="wd-name">—</div>
+      <div id="weaponDescText" class="wd-text">Hover a weapon to see details.</div>
+      <div id="weaponStats" class="wd-stats"></div>
+    </div>
+    <button id="startBtn" onclick="startGame()" disabled>Select a Weapon</button>
+    <button class="back-btn" onclick="showScreen('nameScreen')">← Back</button>
+  </div>
+</div>
+
+<!-- ── Game Screen ───────────────────────────────────────────── -->
+<div id="gameScreen" class="screen">
+  <canvas id="gameCanvas" width="900" height="620"></canvas>
+</div>
+
+<!-- ── Leaderboard Screen ────────────────────────────────────── -->
+<div id="leaderboardScreen" class="screen">
+  <div class="lb-box">
+    <div class="section-title">⚔ HALL OF KNIGHTS ⚔</div>
+    <div class="lb-tabs">
+      <button class="lb-tab active" onclick="switchTab('endless', this)">Endless Mode</button>
+      <button class="lb-tab" onclick="switchTab('classic', this)">Classic Mode</button>
+    </div>
+    <div id="lbTable" class="lb-table-wrap"></div>
+    <button class="back-btn" onclick="showScreen('nameScreen')">← Back</button>
+  </div>
+</div>
+
+<script src="weapons.js"></script>
+<script src="game.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
